@@ -1,8 +1,8 @@
 import streamlit as st
 import openai
 import base64
-from io import BytesIO
 
+# Streamlit secrets에서 API 키 로드
 openai.api_key = st.secrets["openai_key"]
 
 st.title("사진으로 보는 성격과 인상 분석 웹앱")
@@ -10,7 +10,7 @@ st.title("사진으로 보는 성격과 인상 분석 웹앱")
 uploaded_file = st.file_uploader("사람의 얼굴 사진을 업로드 해주세요", type=["png", "jpg", "jpeg"])
 
 def get_image_base64(image_file):
-    image_file.seek(0)  # 스트림 위치를 처음으로 되돌림
+    image_file.seek(0)  # 스트림 위치 초기화 (중요)
     return base64.b64encode(image_file.read()).decode()
 
 @st.cache_data(show_spinner=False)
@@ -28,7 +28,7 @@ def analyze_personality(image_b64):
             {"role": "system", "content": "당신은 친절하고 전문적인 성격 분석가입니다."},
             {"role": "user", "content": prompt}
         ],
-        max_tokens=200,  # 토큰 수 조절
+        max_tokens=200,
         temperature=0.8,
     )
     return response['choices'][0]['message']['content']
@@ -37,7 +37,6 @@ if uploaded_file:
     st.image(uploaded_file, caption="업로드한 사진", use_column_width=True)
     with st.spinner("분석 중입니다... 잠시만 기다려주세요."):
         try:
-            uploaded_file.seek(0)  # base64 인코딩을 위해 위치 초기화
             image_b64 = get_image_base64(uploaded_file)
             result = analyze_personality(image_b64)
             st.markdown("### 분석 결과")
