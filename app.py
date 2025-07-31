@@ -2,7 +2,6 @@ import streamlit as st
 import openai
 import base64
 
-# Streamlit secrets에서 API 키 로드
 openai.api_key = st.secrets["openai_key"]
 
 st.title("사진으로 보는 성격과 인상 분석 웹앱")
@@ -10,7 +9,7 @@ st.title("사진으로 보는 성격과 인상 분석 웹앱")
 uploaded_file = st.file_uploader("사람의 얼굴 사진을 업로드 해주세요", type=["png", "jpg", "jpeg"])
 
 def get_image_base64(image_file):
-    image_file.seek(0)  # 스트림 위치 초기화 (중요)
+    image_file.seek(0)
     return base64.b64encode(image_file.read()).decode()
 
 @st.cache_data(show_spinner=False)
